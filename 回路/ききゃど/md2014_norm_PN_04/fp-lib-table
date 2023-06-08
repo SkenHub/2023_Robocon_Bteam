@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "md2014_norm_PN_04")(type "KiCad")(uri "$(KIPRJMOD)/md2014_norm_PN_04.pretty")(options "")(descr ""))
+)
