@@ -1,5 +1,5 @@
-#include <wit_c_sdk.h>
-#include <REG.h>
+#include "wit_c_sdk.h"
+#include "REG.h"
 /*
 Test on MEGA 2560. use WT901CTTL sensor
 
@@ -23,6 +23,14 @@ static void SensorUartSend(uint8_t *p_data, uint32_t uiSize);
 static void SensorDataUpdata(uint32_t uiReg, uint32_t uiRegNum);
 static void Delayms(uint16_t ucMs);
 const uint32_t c_uiBaud[8] = { 0, 4800, 9600, 19200, 38400, 57600, 115200, 230400 };
+
+union Convert{
+  uint8_t uint8_t_val[4];
+  int32_t int_val;
+  float float_val;
+};
+
+Convert convert;
 
 void setup() {
   // put your setup code here, to run once:
@@ -57,6 +65,14 @@ void loop() {
       z = fAngle[2] + 180;
       Serial.print(z, 3);
       Serial.print("\r\n");
+
+      Serial1.write(0xA0);
+      Serial1.write(0xA0);
+      convert.float_val = z;
+      for(int i=0; i<4; i++){
+        Serial1.write(convert.uint8_t_val[i]);
+      }
+
       s_cDataUpdate &= ~ANGLE_UPDATE;
     }
     s_cDataUpdate = 0;
