@@ -32,7 +32,7 @@ static void SensorDataUpdata(uint32_t uiReg, uint32_t uiRegNum);
 static void Delayms(uint16_t ucMs);
 const uint32_t c_uiBaud[8] = { 0, 4800, 9600, 19200, 38400, 57600, 115200, 230400 };
 
-union Convert{
+union Convert {
   uint8_t uint8_t_val[4];
   int32_t int_val;
   float float_val;
@@ -50,17 +50,16 @@ void setup() {
   WitDelayMsRegister(Delayms);
   Serial.print("\r\n********************** wit-motion normal example  ************************\r\n");
   AutoScanSensor();
-　// I2C通信を初期化
+  // I2C通信を初期化
   Wire.begin();
   // OLEDディスプレイを初期化
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); // OLEDディスプレイのアドレス（0x3C）を指定 
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // OLEDディスプレイのアドレス（0x3C）を指定
   // テキストや図形を表示する前に、ディスプレイをクリア
   display.clearDisplay();
   // テキストの表示
-  display.setTextSize(2);
+  display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0, 0);
-  display.println("Hello, World!");
   // ディスプレイに反映
   display.display();
 }
@@ -68,9 +67,15 @@ int i;
 float fAcc[3], fGyro[3], fAngle[3];
 float z;
 void loop() {
-  display.print(z);
-  display.display();
+  // ディスプレイをクリア
   display.clearDisplay();
+  // 新しい値を表示
+  display.setTextSize(3);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.print(z, 3);
+  // ディスプレイを更新
+  display.display();
   while (Serial1.available()) {
     WitSerialDataIn(Serial1.read());
   }
@@ -93,7 +98,7 @@ void loop() {
       Serial1.write(0xA0);
       Serial1.write(0xA0);
       convert.float_val = z;
-      for(int i=0; i<4; i++){
+      for (int i = 0; i < 4; i++) {
         Serial1.write(convert.uint8_t_val[i]);
       }
 
