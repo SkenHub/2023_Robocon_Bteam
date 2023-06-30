@@ -8,7 +8,7 @@
 #ifndef I2C_H_
 #define I2C_H_
 
-#include "sken_library/include.h"
+#include "include.h"
 
 class I2C {
 	GPIO_InitTypeDef i2c_gpio_init_;
