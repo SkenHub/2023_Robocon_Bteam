@@ -68,7 +68,7 @@ int i;
 float fAcc[3], fGyro[3], fAngle[3];
 float z;
 void loop() {
-　display.print(z);
+  display.print(z);
   display.display();
   display.clearDisplay();
   while (Serial1.available()) {
