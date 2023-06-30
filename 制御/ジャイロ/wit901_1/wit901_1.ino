@@ -1,5 +1,13 @@
-#include "wit_c_sdk.h"
-#include "REG.h"
+#include <wit_c_sdk.h>
+#include <REG.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 /*
 Test on MEGA 2560. use WT901CTTL sensor
 
@@ -42,11 +50,27 @@ void setup() {
   WitDelayMsRegister(Delayms);
   Serial.print("\r\n********************** wit-motion normal example  ************************\r\n");
   AutoScanSensor();
+　// I2C通信を初期化
+  Wire.begin();
+  // OLEDディスプレイを初期化
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); // OLEDディスプレイのアドレス（0x3C）を指定 
+  // テキストや図形を表示する前に、ディスプレイをクリア
+  display.clearDisplay();
+  // テキストの表示
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.println("Hello, World!");
+  // ディスプレイに反映
+  display.display();
 }
 int i;
 float fAcc[3], fGyro[3], fAngle[3];
 float z;
 void loop() {
+　display.print(z);
+  display.display();
+  display.clearDisplay();
   while (Serial1.available()) {
     WitSerialDataIn(Serial1.read());
   }
