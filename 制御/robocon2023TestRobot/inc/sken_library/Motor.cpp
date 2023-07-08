@@ -26,6 +26,8 @@ void Motor::init(MtrPin mtr_pin,Pin pin,TimerNumber timer,TimerChannel ch){
 }
 
 void Motor::write(int val){
+	if(val>100) val=100;
+	if(val<-100)val=-100;
 	if(mtr_name_ == ShibaDriver){
 		if(val == 0){
 			motor[0].write(LOW);

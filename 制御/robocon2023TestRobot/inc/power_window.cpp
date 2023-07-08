@@ -18,8 +18,11 @@ void UDU::pww_init(PwwPos pos,MtrPin mtrpin,Pin pin,TimerNumber timer,TimerChann
 }
 
 void UDU::offset(){
+	for(int i=0; i<4; i++){
+		target_height_[i] = 0;
+	}
 	while(true){
-		if(!sw_read(SwFR,Below)) pww_write(PwwFR,-20);
+		if(!sw_read(SwFR,Below)) pww_write(PwwFR,-30); else pww_write(PwwFR,0);
 		/*if(!sw_read(SwFL,Below)) pww_write(PwwFR,-20);
 		if(!sw_read(SwBR,Below)) pww_write(PwwFR,-20);
 		if(!sw_read(SwBR,Below)) pww_write(PwwFR,-20);
@@ -52,9 +55,12 @@ void UDU::lift(PwwPos pos,double height){
 void UDU::interrupt(){
 	double deg,rad;
 	for(int i=0; i<4; i++){
-		if(!before_swB_[i] && below_sw_[i].read()) enc_[i].reset();
+		//if(below_sw_[i].read()) enc_[i].reset();
+		//if(below_sw_[i].read()) pid_[i].reset();
 		enc_[i].interrupt(&encoder_data_[i]);
 		deg = encoder_data_[i].deg;
+		if(deg < 0) deg = 0;
+		if(deg > 55)deg = 55;
 		rad = deg / 360.0 * 2*PI;
 		now_height_[i] = 380.0*cos(-1*rad + 1.336911107)-380*cos(76.6/360.0*2*PI);
 		out_[i] = pid_[i].control(target_height_[i],now_height_[i],1);
@@ -63,10 +69,10 @@ void UDU::interrupt(){
 			pid_[i].reset();
 		}
 		if(out_[i] == 0){
-			pid_[i].reset();
 			motor_[i].stop();
 		}else{
-			if(out_[i] < -50) out_[i] = -20;
+			if(out_[i] < -100) out_[i] = -100;
+			if(out_[i] >  100) out_[i] = 100;
 			motor_[i].write(out_[i]);
 		}
 		before_swA_[i] = above_sw_[i].read();
@@ -78,8 +84,12 @@ void UDU::pww_write(PwwPos pos,int val){
 	motor_[pos].write(val);
 }
 
-bool UDU::sw_read(SwPos pos,SwHeight height){
-	return (height == Above)? above_sw_[pos].read() : below_sw_[pos].read();
+bool UDU::sw_read(SwPos pos,SwHeight height,SwTime sw_time){
+	if(sw_time == now){
+		return (height == Above)? above_sw_[pos].read() : below_sw_[pos].read();
+	}else{
+		return (height == Above)? before_swA_[pos] : before_swB_[pos];
+	}
 }
 
 void UDU::Debug(double *target,double *now,double *out,Encoder_data *encoder_data){

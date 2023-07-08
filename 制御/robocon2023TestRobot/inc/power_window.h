@@ -37,6 +37,11 @@ enum EncPos{
 	EncBL,
 };
 
+enum SwTime{
+	now,
+	past,
+};
+
 class UDU : public SkenMdd{
 	Gpio above_sw_[4],below_sw_[4];
 	Motor motor_[4];
@@ -57,7 +62,7 @@ public:
 	void lift(PwwPos pos,double height);
 	void interrupt();
 	void pww_write(PwwPos pos,int val);
-	bool sw_read(SwPos pos,SwHeight height);
+	bool sw_read(SwPos pos,SwHeight height,SwTime sw_time = now);
 	void Debug(double *target,double *now,double *out,Encoder_data *encoder_data);
 };
 
