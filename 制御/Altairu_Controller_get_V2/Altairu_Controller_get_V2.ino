@@ -14,6 +14,10 @@ Servo servo2;
 const int S1 = 19;
 const int S2 = 18;
 int speed1, speed2, speed3;
+double spk1=0.5;//スピードゲイン（百分率）
+double spk2=0.5;
+double spk3=0.5;
+
 
 bool databox[11];
 bool limitSwitches[6];
@@ -72,9 +76,9 @@ void mt() {
       Serial.print(", ");
     }
     Serial.println();
-    speed1 = data[0] == "1" ? 256 : (data[2] == "1" ? -256 : 0);
-    speed2 = data[1] == "1" ? 256 : (data[3] == "1" ? -256 : 0);
-    speed3 = data[4] == "1" ? 256 : (data[6] == "1" ? -256 : 0);
+    speed1 = data[0] == "1" ? 256*spk1 : (data[2] == "1" ? -256*spk1 : 0);
+    speed2 = data[1] == "1" ? 256*spk2 : (data[3] == "1" ? -256*spk2 : 0);
+    speed3 = data[4] == "1" ? 256*spk3 : (data[6] == "1" ? -256*spk3 : 0);
   }
 }
 
@@ -86,21 +90,18 @@ void readLimitSwitches() {
 
 void updateSpeeds() {
   if (limitSwitches[0]) {
-    speed1 = -256;
+    speed1 = -256*spk1;
   } 
   if (limitSwitches[1]) {
-    speed2 = -256;
+    speed1 = 256*spk1;
   }
   if (limitSwitches[2]) {
-    speed2 = -256;
+    speed2 = -256*spk2;
   }
   if (limitSwitches[3]) {
-    speed2 = 256;
+    speed2 = 256*spk2;
   }
   if (limitSwitches[4]) {
-    speed2 = -256;
-  }
-  if (limitSwitches[5]) {
-    speed3 = 256;
+    speed3 = -256*spk3;
   }
 }
