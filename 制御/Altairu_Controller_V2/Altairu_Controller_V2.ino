@@ -10,7 +10,7 @@
 #define BUTTON_COUNT 8
 #define TOGGLE_COUNT 2
 
-String MACadd = "E8:68:E7:31:17:1E";
+String MACadd = "E8:68:E7:31:17:1E";// 黄色 EC:62:60:9C:0C:26
 uint8_t address[6] = { 0xe8, 0x68, 0xe7, 0x31, 0x17, 0x1e };
 bool connected;
 
