@@ -14,16 +14,16 @@ Servo servo2;
 const int S1 = 19;
 const int S2 = 18;
 int speed1, speed2, speed3;
-double spk1=0.5;//スピードゲイン（百分率）
-double spk2=0.5;
-double spk3=0.5;
+double spk1 = 0.5;  //スピードゲイン
+double spk2 = 0.3;
+double spk3 = 0.5;
 
-
+String data[11];
 bool databox[11];
 bool limitSwitches[6];
 const int limitSwitchPins[] = { 27, 26, 25, 33, 32, 35, 34 };  // io27, io26, io25, io33, io32, io35, io34
 
-const float thresholdVoltage = 2.7;    // 閾値電圧
+const float thresholdVoltage = 2.7;  // 閾値電圧
 
 void setup() {
   Serial.begin(115200);
@@ -43,19 +43,18 @@ void setup() {
 void loop() {
   readLimitSwitches();
   updateSpeeds();
-
   mtr[0].ugoki(speed1);
   mtr[1].ugoki(speed2);
   mtr[2].ugoki(speed3);
-  mt();
+  RaMt();
+  servomt();
 }
 
-void mt() {
+void RaMt() {
   if (SerialBT.available()) {
     String receivedData = SerialBT.readStringUntil('\n');
     receivedData.trim();
     int dataIndex = 0;
-    String data[11];
 
     while (receivedData.length() > 0 && dataIndex < 11) {
       int commaIndex = receivedData.indexOf(',');
@@ -76,11 +75,25 @@ void mt() {
       Serial.print(", ");
     }
     Serial.println();
-    speed1 = data[0] == "1" ? 256*spk1 : (data[2] == "1" ? -256*spk1 : 0);
-    speed2 = data[1] == "1" ? 256*spk2 : (data[3] == "1" ? -256*spk2 : 0);
-    speed3 = data[4] == "1" ? 256*spk3 : (data[6] == "1" ? -256*spk3 : 0);
+    speed1 = data[0] == "1" ? 256 * spk1 : (data[2] == "1" ? -256 * spk1 : 0);
+    speed2 = data[1] == "1" ? -256 * spk2 : (data[3] == "1" ? 256 * spk2 : 0);
+    speed3 = data[4] == "1" ? -256 * spk3 : (data[6] == "1" ? 256 * spk3 : 0);
   }
 }
+
+void servomt() {
+  if (data[8] == "1") {
+    servo1.write(0);
+  } else if (data[8] == "0") {
+    servo1.write(90);
+  }
+  if (data[9] == "1") {
+    mtr[1].tomaru();
+  } else if (data[9] == "0") {
+
+  }
+}
+
 
 void readLimitSwitches() {
   for (int i = 0; i < 6; i++) {
@@ -90,18 +103,18 @@ void readLimitSwitches() {
 
 void updateSpeeds() {
   if (limitSwitches[0]) {
-    speed1 = -256*spk1;
-  } 
+    speed1 = -256 * spk1;
+  }
   if (limitSwitches[1]) {
-    speed1 = 256*spk1;
+    speed1 = 256 * spk1;
   }
   if (limitSwitches[2]) {
-    speed2 = -256*spk2;
+    speed2 = -256 * spk2;
   }
   if (limitSwitches[3]) {
-    speed2 = 256*spk2;
+    speed2 = 256 * spk2;
   }
   if (limitSwitches[4]) {
-    speed3 = -256*spk3;
+    speed3 = -256 * spk3;
   }
 }
