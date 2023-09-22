@@ -91,14 +91,14 @@ void RaMt() {
 
 void servomt() {
   if (data[8] == "1") {
-    servo1.write(0);
+    servo1.write(10);
   } else if (data[8] == "0") {
     servo1.write(90);
   }
   if (data[9] == "1") {
     servo2.write(0);
   } else if (data[9] == "0") {
-    servo2.write(90);
+    servo2.write(70);
   }
 }
 
@@ -119,7 +119,7 @@ void updateSpeeds() {
     speed1 = 0;
   }
   //ロジャー速度
-  if (data[1] == "1" && data[3] == "0" && limitSwitches[2] && limitSwitches[1]) {//ロジャーリミット上,ウォームリミット上
+  if (data[1] == "1" && data[3] == "0" && limitSwitches[2] && !limitSwitches[1]) {//ロジャーリミット上,ウォームリミット上
     speed2 = -255 * spk2;
   } else if (data[1] == "0" && data[3] == "1" && limitSwitches[3]) {//ロジャーリミット下
     speed2 = 255 * spk2 * 0.2;
