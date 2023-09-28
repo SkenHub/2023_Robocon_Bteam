@@ -98,7 +98,7 @@ void servomt() {
   if (data[9] == "1") {
     servo2.write(0);
   } else if (data[9] == "0") {
-    servo2.write(70);
+    servo2.write(80);
   }
 }
 
