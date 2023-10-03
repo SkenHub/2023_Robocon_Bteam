@@ -24,8 +24,7 @@ Uart uart;
 uint8_t yaw_data[6];
 float yaw_deg;
 
-Motor crawlar[2];
-
+Gpio LEDtape[3];	//0:赤 1:青 2:緑
 RcPwm servo[4];
 
 SkenMdd mdd;
@@ -80,16 +79,6 @@ void ps3_servo(){
 	servo_control(servo_deg);
 }
 
-int crawlar_pwm[2];
-void ps3_crawlar(){
-	static bool crawlar_flag[2];
-	for(int i=0; i<2; i++){
-		crawlar_flag[i] = (ps3_data.L2 && !past_ps3.L2)? !crawlar_flag[i] : crawlar_flag[i];
-		crawlar_pwm[i] = 100*crawlar_flag[i];
-		crawlar[i].write(crawlar_pwm[i]);
-	}
-}
-
 void float_convert(){
 	for(int i=0; i<4; i++){
 		ConvertIntFloat convert;
@@ -121,7 +110,6 @@ void robot_func(){
 	yaw_convert();
 	robot_carry();
 	ps3_servo();
-	ps3_crawlar();
 	past_ps3 = ps3_data;
 }
 
@@ -143,8 +131,9 @@ int main(void){
 	uart.init(A0,A1,SERIAL4,115200);
 	uart.startDmaRead(yaw_data,6);
 
-	crawlar[0].init(A8,C7,A12,TIMER3,CH2);
-	crawlar[1].init(B14,B3,B10,TIMER2,CH2);
+	LEDtape[0].init(A8,OUTPUT);
+	LEDtape[1].init(A8,OUTPUT);
+	LEDtape[2].init(A8,OUTPUT);
 
 	servo[0].init(A0,TIMER5,CH1);
 	servo[1].init(A1,TIMER5,CH2);
