@@ -28,6 +28,8 @@ Gpio LEDtape[3];	//0:赤 1:青 2:緑
 Gpio Bsw;
 RcPwm servo[4];
 
+Motor CollectMtr;
+
 SkenMdd mdd;
 float mode[4] = {0,0,0,0};
 float M1_gain[4] = {10.0,3.0,0,20};
@@ -120,6 +122,18 @@ void LED_select(){
 	past_sw = !Bsw.read();
 }
 
+void collect_ps3(int Duty){
+	int duty;
+	if(ps3_data.R1){
+		duty = Duty;
+	}else if(ps3_data.R2){
+		duty = -1*Duty;
+	}else{
+		duty = 0;
+	}
+	CollectMtr.write(duty);
+}
+
 void robot_func(){
 	//im920.read(&RXID,send_data,Bytes16);
 	//im920.write(send_data,Bytes16);
@@ -129,6 +143,7 @@ void robot_func(){
 	robot_carry();
 	ps3_servo();
 	LED_select();
+	collect_ps3(10);   //括弧の中の数字を0~100で調整してね。30以上はたぶんロボット壊れると思うなーー
 	past_ps3 = ps3_data;
 }
 
@@ -147,12 +162,14 @@ int main(void){
 	mdd.tcp(ENCODER_RESOLUTION_CONFIG,encoder_parm,10,2000);
 	//mdd.tcp(ROBOT_DIAMETER_CONFIG,diameter,10,2000);
 
-	uart.init(A0,A1,SERIAL4,115200);
-	uart.startDmaRead(yaw_data,6);
+	//uart.init(A0,A1,SERIAL4,115200);
+	//uart.startDmaRead(yaw_data,6);
 
 	LEDtape[0].init(C0,OUTPUT);
 	LEDtape[1].init(C1,OUTPUT);
 	LEDtape[2].init(C3,OUTPUT);
+
+	CollectMtr.init(B10,A2,B15,TIMER2,CH3);
 
 	Bsw.init(C13,INPUT_PULLUP);
 
